@@ -14,11 +14,11 @@ class Component<ReactProps, ReactState, StatefulState, StatefulAction, StatefulM
 	
 	override function componentWillMount() {
 		dispatch = context.manager.dispatch;
-		setState(mapState(context.manager.state));
+		handleState(context.manager.state);
 	}
 	
 	override function componentDidMount() {
-		_handler = context.manager.changed.handle(function(s) setState(mapState(context.manager.state)));
+		_handler = context.manager.changed.handle(handleState);
 	}
 	
 	override function componentWillUnmount() {
@@ -26,6 +26,13 @@ class Component<ReactProps, ReactState, StatefulState, StatefulAction, StatefulM
 	}
 	
 	function mapState(state:StatefulState):ReactState {
-		throw 'mapState is not implemented';
+		return null;
+	}
+	
+	function handleState(state:StatefulState) {
+		switch mapState(state) {
+			case null:
+			case v: setState(v);
+		}
 	}
 }
