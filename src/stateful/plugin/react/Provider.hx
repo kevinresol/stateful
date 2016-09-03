@@ -6,7 +6,7 @@ import react.ReactPropTypes;
 import stateful.Manager;
 
 
-class Provider<M/*:Manager<S, A>*/> extends ReactComponentOfProps<{manager:M}> {
+class Provider<M/*:Manager<S, A>*/> extends ReactComponentOfProps<{manager:M, children:Dynamic}> {
 	
 	static var childContextTypes = {
 		manager: ReactPropTypes.object,
