@@ -2,7 +2,7 @@ package stateful;
 
 using tink.CoreApi;
 
-typedef Dispatcher<Action> = ManagedAction<Action>->Void;
+typedef Dispatcher<Action> = AnyTime<Action>->Void;
 
 class Manager<State, Action> {
 	
@@ -15,7 +15,7 @@ class Manager<State, Action> {
 		changed = changedTrigger = Signal.trigger();
 	}
 	
-	public function dispatch(action:ManagedAction<Action>) {
+	public function dispatch(action:AnyTime<Action>) {
 		action.handle(function(action) {
 			var oldState = state;
 			state = handle(state, action);
@@ -29,8 +29,8 @@ class Manager<State, Action> {
 }
 
 @:forward
-private abstract ManagedAction<Action>(Future<Action>) from Future<Action> to Future<Action> {
+private abstract AnyTime<Action>(Future<Action>) from Future<Action> to Future<Action> {
 	@:from
-	public static inline function ofSync<A>(action:A):ManagedAction<A>
+	public static inline function ofSync<A>(action:A):AnyTime<A>
 		return Future.sync(action);
 }
