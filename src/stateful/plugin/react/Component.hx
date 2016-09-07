@@ -11,6 +11,7 @@ class Component<ReactProps, PresentationProps, StatefulState, StatefulAction, St
 	extends ReactComponentOf<ReactProps, Dynamic, Dynamic, {manager:StatefulManager}> {
 	
 	var Presentation:Class<ReactComponentOfProps<PresentationProps>>;
+	var presentation:ReactComponentOfProps<PresentationProps>;
 	var dispatch:Dispatcher<StatefulAction>;
 	var _handler:CallbackLink;
 	
@@ -20,7 +21,10 @@ class Component<ReactProps, PresentationProps, StatefulState, StatefulAction, St
 	}
 	
 	override function render() {
-		return jsx('<Presentation {...mapStateToProps(context.manager.state)}/>');
+		if(Presentation != null)
+			return jsx('<Presentation {...mapStateToProps(context.manager.state)} ref={function(r) presentation = r}/>');
+		else
+			return jsx('<p>Error: Please specify a Presenation class or override the render method ({Type.getClassName(Type.getClass(this))})</p>');
 	}
 	
 	override function componentWillMount() {
