@@ -1,20 +1,30 @@
 package stateful.plugin.react;
 
+import react.ReactMacro.*;
 import react.ReactComponent;
 import stateful.Manager;
 
 using tink.CoreApi;
 
 @:autoBuild(stateful.plugin.react.Macro.build())
-class Component<ReactProps, ReactState, StatefulState, StatefulAction, StatefulManager:Manager<StatefulState, StatefulAction>> 
-	extends ReactComponentOf<ReactProps, ReactState, Dynamic, {manager:StatefulManager}> {
+class Component<ReactProps, PresentationProps, StatefulState, StatefulAction, StatefulManager:Manager<StatefulState, StatefulAction>> 
+	extends ReactComponentOf<ReactProps, Dynamic, Dynamic, {manager:StatefulManager}> {
 	
+	var Presentation:Class<ReactComponentOfProps<PresentationProps>>;
 	var dispatch:Dispatcher<StatefulAction>;
 	var _handler:CallbackLink;
 	
+	function new(props, presentation) {
+		super(props);
+		Presentation = presentation; 
+	}
+	
+	override function render() {
+		return jsx('<Presentation {...mapStateToProps(context.manager.state)}/>');
+	}
+	
 	override function componentWillMount() {
 		dispatch = context.manager.dispatch;
-		handleState(context.manager.state);
 	}
 	
 	override function componentDidMount() {
@@ -25,14 +35,12 @@ class Component<ReactProps, ReactState, StatefulState, StatefulAction, StatefulM
 		_handler.dissolve();
 	}
 	
-	function mapState(state:StatefulState):ReactState {
+	function mapStateToProps(state:StatefulState):PresentationProps {
 		return null;
 	}
 	
 	function handleState(state:StatefulState) {
-		switch mapState(state) {
-			case null:
-			case v: setState(v);
-		}
+		forceUpdate();
 	}
+	
 }
