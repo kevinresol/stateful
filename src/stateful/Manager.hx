@@ -19,7 +19,7 @@ class Manager<State, Action> {
 		action.handle(function(action) {
 			var oldState = state;
 			state = handle(state, action);
-			changedTrigger.trigger(state);
+			if(oldState != state) changedTrigger.trigger(state);
 		});
 	}
 	
