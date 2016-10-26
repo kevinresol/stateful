@@ -2,6 +2,9 @@ package stateful;
 
 class Store<S, A> {
 	
+	// TODO: find a way to avoid scoping issue when using with react-redux, to change dispatch back to an instance method
+	public var dispatch(default, null):A->Void;
+	
 	var reducer:Reducer<S, A>;
 	var state:S;
 	var listeners:Array<Listener<S, A>>;
@@ -10,20 +13,21 @@ class Store<S, A> {
 		this.reducer = reducer;
 		this.state = initialState;
 		listeners = [];
+		dispatch = function (action:A) {
+			var oldState = this.state;
+			state = reducer(state, action);
+			for(listener in listeners.copy())
+				listener(state, oldState, action);
+		}
 		dispatch(null);
 	}
 	
+	@:keep
 	public inline function getState() {
 		return state;
 	}
 	
-	public function dispatch(action:A) {
-		var oldState = state;
-		state = reducer(state, action);
-		for(listener in listeners.copy())
-			listener(state, oldState, action);
-	}
-	
+	@:keep
 	public function subscribe(listener:Listener<S, A>) {
 		if(listeners.indexOf(listener) == -1) listeners.push(listener);
 		return function() listeners.remove(listener);
