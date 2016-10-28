@@ -24,11 +24,8 @@ abstract Reducer<S, A>(R<S, A>) from R<S, A> to R<S, A> {
 				return macro function(state, action) {
 					var newState = $ret;
 					
-					// return newState if original state is null
-					if(state == null) return newState;
-					
-					// return newState if any of the sub-state changed
-					if(${conds.fold(function(i, last) return last == null ? i : macro $last || $i, null)})
+					// return newState if original state is null or any of the sub-state changed
+					if(${conds.fold(function(i, last) return macro $last || $i, macro state == null)})
 						return newState;
 					
 					// otherwise return the original state
